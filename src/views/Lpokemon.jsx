@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {
-    Button,
+    Badge,
+    Breadcrumb, BreadcrumbItem,
     Card,
     CardBody,
     CardHeader,
-    Col,  FormGroup, FormText, Input,
-    Label,
+    Col, Container,
     Nav,
     NavItem,
     NavLink,
@@ -17,14 +17,17 @@ import {
 // sections for this page/view
 
 import classnames from "classnames";
+import IndexNavbar from "../components/Navbars/IndexNavbar";
+import Pikachu from "../assets/img/Pikachu.png";
+import Footer from "../components/Footer/Footer";
 
 export default function Lpokemon(props){
     const [tabs, setTabs] = useState(1);
     const [ Error, setError ] = useState(false)
-    const [ loading, setLoading ] = useState(true)
     const [ PokemonID, setPokemonID ] = useState([])
     const [ PokemonImg, setPokemonImg ] = useState([])
     const [ PokemonAbb, setPokemonAbb ] = useState([])
+    const [ PokemonStats, setPokemonStats ] = useState([])
     const [ PokemonTyp, setPokemonTyp ] = useState([])
 
     useEffect(() => {
@@ -35,18 +38,26 @@ export default function Lpokemon(props){
                 setPokemonID(json.name);
                 setPokemonImg(json.sprites.other["official-artwork"].front_default);
                 setPokemonAbb(json.abilities);
-                setPokemonTyp(json.types)
-                setLoading(false);
+                setPokemonStats(json.stats);
+                setPokemonTyp(json.types);
                 setError(false)
             } catch (e) {
                 console.log(e)
-                setLoading(false)
                 setError(true)
             }
         }
         fetchPokemon()
     },[props.url])
-return <Col className="ml-auto mr-auto" lg="4" md="6">
+return Error ? (<><IndexNavbar/>
+    <br/><br/><br/><br/>
+    <Breadcrumb>
+        <BreadcrumbItem><a href="/">Inicio</a></BreadcrumbItem>
+        <BreadcrumbItem active>Pokemon</BreadcrumbItem>
+    </Breadcrumb>
+    <Container className="align-items-center">
+        <p className="h1">Listado de Pokemon</p><img src={Pikachu} alt="Logo" className={'Sad'}/><h1
+        className={'App'}>No se encuentra lo que buscas</h1></Container>
+    <Footer/></>) : (<Col className="ml-auto mr-auto" lg="4" md="6">
     <Card className="card-coin card-plain">
         <CardHeader>
             <img
@@ -72,7 +83,7 @@ return <Col className="ml-auto mr-auto" lg="4" md="6">
                         }}
                         href="#"
                     >
-
+                        Stats
                     </NavLink>
                 </NavItem>
                 <NavItem>
@@ -84,9 +95,9 @@ return <Col className="ml-auto mr-auto" lg="4" md="6">
                             e.preventDefault();
                             setTabs(2);
                         }}
-                        href="#pablo"
+                        href="#"
                     >
-                        Send
+                        Type
                     </NavLink>
                 </NavItem>
                 <NavItem>
@@ -112,60 +123,22 @@ return <Col className="ml-auto mr-auto" lg="4" md="6">
                     <Table className="tablesorter" responsive>
                         <thead className="text-primary">
                         <tr>
-                            <th className="header">COIN</th>
-                            <th className="header">AMOUNT</th>
-                            <th className="header">VALUE</th>
+                            <th>Habilidad</th>
+                            <th>Puntuación</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>BTC</td>
-                            <td>7.342</td>
-                            <td>48,870.75 USD</td>
-                        </tr>
-                        <tr>
-                            <td>ETH</td>
-                            <td>30.737</td>
-                            <td>64,53.30 USD</td>
-                        </tr>
-                        <tr>
-                            <td>XRP</td>
-                            <td>19.242</td>
-                            <td>18,354.96 USD</td>
-                        </tr>
+                            {PokemonStats.map((item,index)=> {return (<><tr key={index}><td key={index}>{item.stat.name}</td><td key={index}>{item.base_stat}</td></tr></>)})}
                         </tbody>
                     </Table>
                 </TabPane>
                 <TabPane tabId="tab2">
                     <Row>
-                        <Label sm="3">Pay to</Label>
-                        <Col sm="9">
-                            <FormGroup>
-                                <Input
-                                    placeholder="e.g. 1Nasd92348hU984353hfid"
-                                    type="text"
-                                />
-                                <FormText color="default" tag="span">
-                                    Please enter a valid address.
-                                </FormText>
-                            </FormGroup>
-                        </Col>
+                        {PokemonAbb.map((item,index)=> { return (<><Col sm="6" key={index}><Badge color="primary" pill key={index}>{item.ability.name}</Badge></Col></>)})}
                     </Row>
                     <Row>
-                        <Label sm="3">Amount</Label>
-                        <Col sm="9">
-                            <FormGroup>
-                                <Input placeholder="1.587" type="text" />
-                            </FormGroup>
-                        </Col>
+                        {PokemonTyp.map((item,index)=> { return (<><Col sm="6" key={index}><Badge color="danger" pill key={index}>{item.type.name}</Badge></Col></>)})}
                     </Row>
-                    <Button
-                        className="btn-simple btn-icon btn-round float-right"
-                        color="primary"
-                        type="submit"
-                    >
-                        <i className="tim-icons icon-send" />
-                    </Button>
                 </TabPane>
                 <TabPane tabId="tab3">
                     <Table className="tablesorter" responsive>
@@ -190,5 +163,5 @@ return <Col className="ml-auto mr-auto" lg="4" md="6">
             </TabContent>
         </CardBody>
     </Card>
-</Col>
+</Col>)
 }

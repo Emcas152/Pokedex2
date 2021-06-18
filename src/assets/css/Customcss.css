@@ -1,0 +1,30 @@
+.App {
+    text-align: center;
+}
+.Sad {
+    height: 20vmin;
+    pointer-events: none;
+    position: relative;
+    left: 40%
+}
+.App-Poke {
+    height: 20vmin;
+    pointer-events: none;
+    position: relative;
+    left: 45%
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-Poke {
+        animation: App-Poke-spin infinite 10s linear;
+    }
+}
+
+@keyframes App-Poke-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
