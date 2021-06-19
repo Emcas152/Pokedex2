@@ -128,16 +128,16 @@ return Error ? (<><IndexNavbar/>
                         </tr>
                         </thead>
                         <tbody>
-                            {PokemonStats.map((item,index)=> {return (<><tr key={index}><td key={index}>{item.stat.name}</td><td key={index}>{item.base_stat}</td></tr></>)})}
+                            {PokemonStats.map((item,index)=> {return (<tr key={index}><td key={index+10}>{item.stat.name}</td><td key={index+20}>{item.base_stat}</td></tr>)})}
                         </tbody>
                     </Table>
                 </TabPane>
-                <TabPane tabId="tab2">
+                <TabPane tabId="tab2" key={PokemonID}>
                     <Row>
-                        {PokemonAbb.map((item,index)=> { return (<><Col sm="6" key={index}><Badge color="primary" pill key={index}>{item.ability.name}</Badge></Col></>)})}
+                        {PokemonAbb.map((item,index)=> { return (<Col sm="6" key={index+30}><Badge color="primary" pill key={index+40}>{item.ability.name}</Badge></Col>)})}
                     </Row>
                     <Row>
-                        {PokemonTyp.map((item,index)=> { return (<><Col sm="6" key={index}><Badge color="danger" pill key={index}>{item.type.name}</Badge></Col></>)})}
+                        {PokemonTyp.map((item,index)=> { return (<Col sm="6" key={index+50}><Badge color="danger" pill key={index+60}>{item.type.name}</Badge></Col>)})}
                     </Row>
                 </TabPane>
                 <TabPane tabId="tab3">

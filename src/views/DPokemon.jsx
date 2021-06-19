@@ -25,10 +25,13 @@ import Footer from "components/Footer/Footer.js";
 import Pikachu from "../assets/img/Pikachu.png";
 import pokebola from "../assets/img/pokebola.png";
 import Search from "../assets/img/search.png"
+import { useSpeechSynthesis } from 'react-speech-kit';
 
 
 export default function Dpokemon(props) {
     const [tabs, setTabs] = React.useState(1);
+    const [Value, setValue] = useState('');
+    const { speak } = useSpeechSynthesis();
     const {id} = props.location.state;
     const Pokemon = id.PokemonID.toString().toLowerCase()
     const [Error, setError] = useState(false)
@@ -71,7 +74,6 @@ export default function Dpokemon(props) {
                 setPokemonData(json);
                 setPokemonID(json.name);
                 setPokemonImg(json.sprites.other["official-artwork"].front_default);
-                setPokemonAbb(json.abilities);
                 setPokemonStats(json.stats);
                 setPokemonTyp(json.types);
                 setLoading(false)
@@ -93,6 +95,8 @@ export default function Dpokemon(props) {
                 const descES = await InfoJson.flavor_text_entries.filter((e) => e.language.name === "es").map((e) => e.flavor_text)
                 setPokemonInfo(descES)
                 setPokemonEvo(InfoJson.evolution_chain.url)
+                setValue(descES[Math.floor(Math.random() * descES.length)])
+                console.log(Value)
                 setLoading(false)
                 setError(false)
             } catch (e) {
@@ -101,7 +105,8 @@ export default function Dpokemon(props) {
                 setError(true)
             }
         }
-        setTimeout(() => Info(), 5000)
+        setTimeout(() => Info(), 3000)
+
     }, [PokemonID.length])
 
     useEffect(() => {
@@ -120,7 +125,7 @@ export default function Dpokemon(props) {
                 setError(true)
             }
         }
-        setTimeout(() => Evolucion(), 5000)
+        setTimeout(() => {Evolucion(); speak({ text: Value})}, 5000)
     }, [PokemonEvo.length])
 
     return Loading ? (
@@ -170,11 +175,11 @@ export default function Dpokemon(props) {
                         <Row>
                             <Col lg="6" md="6">
                                 <h1 className="profile-title text-left">{PokemonID}</h1>
-                                <h5 className="text-on-back">{PokemonData.id}</h5>
+                                <h5 className="text-on-back" onClick={() => speak({ text: Value})}>{PokemonData.id}</h5>
                                 <div className="profile-description">
                                     {PokemonInfo.length < 1 ? (<><img src={Search} alt="Logo" className={'Sad'}/><h1
                                         className={'App'}>Buscando
-                                        información</h1></>) : (<>{PokemonInfo[Math.floor(Math.random() * PokemonInfo.length)]}</>)}
+                                        información</h1></>) : (<>{Value}</>)}
                                 </div>
                             </Col>
                             <Col className="ml-auto mr-auto" lg="4" md="6">
@@ -301,6 +306,8 @@ export default function Dpokemon(props) {
             </div>
             <br/> <br/> <br/> <br/>
         <Footer/>
+
     </>
+
     );
 }
