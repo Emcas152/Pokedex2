@@ -19,21 +19,24 @@ import {
     Breadcrumb, BreadcrumbItem, Badge,
 } from "reactstrap";
 
+
 // core components
 import IndexNavbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import Pikachu from "../assets/img/Pikachu.png";
 import pokebola from "../assets/img/pokebola.png";
 import Search from "../assets/img/search.png"
-import { useSpeechSynthesis } from 'react-speech-kit';
 
 
 export default function Dpokemon(props) {
+    const { onEnd = () => {} } = props;
+    const [voices, setVoices] = useState([]);
+    const [speaking, setSpeaking] = useState(false);
+    const [supported, setSupported] = useState(false);
      const [ EvoSprites, setEvoSprites ] = useState([]);
      const [ EvoNames, setEvoNames ] = useState([]);
     const [tabs, setTabs] = React.useState(1);
     const [Value, setValue] = useState('');
-    const { speak } = useSpeechSynthesis();
     const {id} = props.location.state;
     const Pokemon = id.PokemonID.toString().toLowerCase()
     const [Error, setError] = useState(false)
@@ -46,6 +49,50 @@ export default function Dpokemon(props) {
     const [PokemonTyp, setPokemonTyp] = useState([])
     const [PokemonInfo, setPokemonInfo] = useState([])
     const [PokemonEvo, setPokemonEvo] = useState([])
+    const voice = voices[5] || null;
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+            setSupported(true);
+        }
+    }, []);
+    const handleEnd = () => {
+        setSpeaking(false);
+        onEnd();
+    };
+    const processVoices = (voiceOptions) => {
+        setVoices(voiceOptions);
+    };
+    const getVoices = () => {
+        // Firefox seems to have voices upfront and never calls the
+        // voiceschanged event
+        let voiceOptions = window.speechSynthesis.getVoices();
+            processVoices(voiceOptions);
+            return;
+
+    };
+    useEffect(() => {
+            if (typeof window !== 'undefined') {
+                setSupported(true);
+                setSpeaking(true);
+
+            }
+        }, []);
+    const speak = (args = {}) => {
+        const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args;
+        if (!supported) return;
+        // Firefox won't repeat an utterance that has been
+        // spoken, so we need to create a new instance each time
+        const utterance = new window.SpeechSynthesisUtterance();
+        utterance.text = text;
+        utterance.voice = voice;
+        utterance.onend = handleEnd;
+        utterance.rate = rate;
+        utterance.pitch = pitch;
+        utterance.volume = volume;
+        window.speechSynthesis.speak(utterance);
+    };
+
     useEffect(() => {
         let ps = null;
         if (navigator.platform.indexOf("Win") < 0) {
@@ -59,7 +106,7 @@ export default function Dpokemon(props) {
         document.body.classList.toggle("profile-page");
         // Specify how to clean up after this effect:
         return function cleanup() {
-            if (navigator.platform.indexOf("Win") > -1) {
+            if (navigator.platform.indexOf("Win") > 1) {
                 ps.destroy();
                 document.documentElement.className += " perfect-scrollbar-off";
                 document.documentElement.classList.remove("perfect-scrollbar-on");
@@ -67,7 +114,6 @@ export default function Dpokemon(props) {
             document.body.classList.toggle("profile-page");
         };
     }, []);
-    console.log()
     useEffect(() => {
         const fetchPokemon = async () => {
             try {
@@ -81,6 +127,7 @@ export default function Dpokemon(props) {
                 setPokemonTyp(json.types);
                 setLoading(false)
                 setError(false)
+
             } catch (e) {
                 console.log(e)
                 setLoading(false)
@@ -101,6 +148,7 @@ export default function Dpokemon(props) {
                 setValue(descES[Math.floor(Math.random() * descES.length)])
                 setLoading(false)
                 setError(false)
+                getVoices();
             } catch (e) {
                 console.log(e)
                 setLoading(false)
@@ -155,7 +203,6 @@ export default function Dpokemon(props) {
             }
     setTimeout(() => Evoluciones(), 3000)
 }, [PokemonEvo])
-    setTimeout(() => { speak({ text: Value})}, 5000)
 
     return Loading ? (
         <><IndexNavbar/>
@@ -204,7 +251,7 @@ export default function Dpokemon(props) {
                         <Row>
                             <Col lg="6" md="6">
                                 <h1 className="profile-title text-left">{PokemonID}</h1>
-                                <h5 className="text-on-back" onClick={() => speak({ text: Value})}>{PokemonData.id}</h5>
+                                <h5 className="text-on-back" onClick={() => speak({ text: Value, voice})}>{PokemonData.id}</h5>
                                 <div className="profile-description">
                                     {PokemonInfo.length < 1 ? (<><img src={Search} alt="Logo" className={'Sad'}/><h1
                                         className={'App'}>Buscando

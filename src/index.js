@@ -8,10 +8,10 @@ import "assets/demo/demo.css";
 
 import Index from "views/Index.js";
 import Dpokemon from "views/DPokemon";
-import ProfilePage from "views/examples/ProfilePage.js";
 import Regiones from  "views/Regiones";
 import DRegion from "views/DRegion"
 import Pokemon from "./views/Pokemon";
+import Items from "./views/Items";
 
 ReactDOM.render(
   <BrowserRouter>
@@ -34,8 +34,8 @@ ReactDOM.render(
         render={(props) => <Regiones {...props} />}
       />
       <Route
-          path="/profile-page"
-          render={(props) => <ProfilePage {...props} />}
+          path="/Items"
+          render={(props) => <Items {...props} />}
       />
       <Redirect from="/" to="/LandingPage" />
     </Switch>

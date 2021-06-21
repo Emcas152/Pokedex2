@@ -174,7 +174,6 @@ export default function Regiones() {
                     </div>
                 </div>
             </div>
-
             <Footer/>
         </>
     )
