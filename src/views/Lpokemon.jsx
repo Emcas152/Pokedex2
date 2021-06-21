@@ -100,20 +100,6 @@ return Error ? (<><IndexNavbar/>
                         Type
                     </NavLink>
                 </NavItem>
-                <NavItem>
-                    <NavLink
-                        className={classnames({
-                            active: tabs === 3,
-                        })}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setTabs(3);
-                        }}
-                        href="#pablo"
-                    >
-                        News
-                    </NavLink>
-                </NavItem>
             </Nav>
             <TabContent
                 className="tab-subcategories"
@@ -139,26 +125,6 @@ return Error ? (<><IndexNavbar/>
                     <Row>
                         {PokemonTyp.map((item,index)=> { return (<Col sm="6" key={index+50}><Badge color="danger" pill key={index+60}>{item.type.name}</Badge></Col>)})}
                     </Row>
-                </TabPane>
-                <TabPane tabId="tab3">
-                    <Table className="tablesorter" responsive>
-                        <thead className="text-primary">
-                        <tr>
-                            <th className="header">Latest Crypto News</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>The Daily: Nexo to Pay on Stable...</td>
-                        </tr>
-                        <tr>
-                            <td>Venezuela Begins Public of Nation...</td>
-                        </tr>
-                        <tr>
-                            <td>PR: BitCanna – Dutch Blockchain...</td>
-                        </tr>
-                        </tbody>
-                    </Table>
                 </TabPane>
             </TabContent>
         </CardBody>

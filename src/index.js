@@ -9,6 +9,8 @@ import "assets/demo/demo.css";
 import Index from "views/Index.js";
 import Dpokemon from "views/DPokemon";
 import ProfilePage from "views/examples/ProfilePage.js";
+import Regiones from  "views/Regiones";
+import DRegion from "views/DRegion"
 import Pokemon from "./views/Pokemon";
 
 ReactDOM.render(
@@ -24,8 +26,12 @@ ReactDOM.render(
         render={(props) => <Dpokemon {...props} />}
       />
       <Route
-        path="/profile-page"
-        render={(props) => <ProfilePage {...props} />}
+          path="/Detalles-Region"
+          render={(props) => <DRegion {...props} />}
+      />
+      <Route
+        path="/Regiones"
+        render={(props) => <Regiones {...props} />}
       />
       <Route
           path="/profile-page"

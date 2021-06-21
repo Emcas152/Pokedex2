@@ -29,6 +29,8 @@ import { useSpeechSynthesis } from 'react-speech-kit';
 
 
 export default function Dpokemon(props) {
+     const [ EvoSprites, setEvoSprites ] = useState([]);
+     const [ EvoNames, setEvoNames ] = useState([]);
     const [tabs, setTabs] = React.useState(1);
     const [Value, setValue] = useState('');
     const { speak } = useSpeechSynthesis();
@@ -73,6 +75,7 @@ export default function Dpokemon(props) {
                 const json = await result.json()
                 setPokemonData(json);
                 setPokemonID(json.name);
+                setPokemonAbb(json.abilities);
                 setPokemonImg(json.sprites.other["official-artwork"].front_default);
                 setPokemonStats(json.stats);
                 setPokemonTyp(json.types);
@@ -96,7 +99,6 @@ export default function Dpokemon(props) {
                 setPokemonInfo(descES)
                 setPokemonEvo(InfoJson.evolution_chain.url)
                 setValue(descES[Math.floor(Math.random() * descES.length)])
-                console.log(Value)
                 setLoading(false)
                 setError(false)
             } catch (e) {
@@ -106,27 +108,54 @@ export default function Dpokemon(props) {
             }
         }
         setTimeout(() => Info(), 3000)
+    }, [PokemonID])
 
-    }, [PokemonID.length])
 
     useEffect(() => {
-        console.log(PokemonEvo)
-        const Evolucion = async () => {
+        const Evoluciones = async ()=> {
             try {
-                const result = await fetch(`${PokemonEvo}`)
-                const EvoJson = await result.json()
-                const first = EvoJson.chain;
-                console.log(EvoJson)
-                setLoading(false)
-                setError(false)
-            } catch (e) {
-                console.log(e)
-                setLoading(false)
-                setError(true)
+                const result = await fetch(PokemonEvo);
+                const json = await result.json();
+                const evol = () => {
+                    const api = "https://pokeapi.co/api/v2/pokemon/";
+                    const first = json.chain;
+                    let second;
+                    let third;
+                    let evos = [];
+                    if (first) {
+                        const e1 = fetch(`${api}${first.species.name}/`);
+                        evos.push(e1);
+                        second = first.evolves_to[0];
+                    }
+                    if (second) {
+                        const e2 = fetch(`${api}${second.species.name}/`);
+                        third = second.evolves_to[0];
+
+                        evos.push(e2);
+                    }
+                    if (third) {
+                        const e3 = fetch(`${api}${third.species.name}/`);
+                        evos.push(e3);
+                    }
+                    Promise.all(evos)
+                        .then(responses => Promise.all(responses.map(value => value.json())))
+                        .then(dataList => {
+                            const sprites = dataList.map(v => v.sprites.other["official-artwork"].front_default);
+                            const names = dataList.map(n => n.name);
+                            setEvoSprites(sprites)
+                            setEvoNames(names)});
+                    }
+
+
+                } catch (e) {
+                    console.log(e)
+                    setLoading(false)
+                    setError(true)
+                }
             }
-        }
-        setTimeout(() => {Evolucion(); speak({ text: Value})}, 5000)
-    }, [PokemonEvo.length])
+    setTimeout(() => Evoluciones(), 3000)
+}, [PokemonEvo])
+    setTimeout(() => { speak({ text: Value})}, 5000)
 
     return Loading ? (
         <><IndexNavbar/>
@@ -236,7 +265,7 @@ export default function Dpokemon(props) {
                                                     }}
                                                     href="#"
                                                 >
-                                                    News
+                                                    Evoluciones
                                                 </NavLink>
                                             </NavItem>
                                         </Nav>
@@ -277,24 +306,17 @@ export default function Dpokemon(props) {
                                                 </Row>
                                             </TabPane>
                                             <TabPane tabId="tab3">
-                                                <Table className="tablesorter" responsive>
-                                                    <thead className="text-primary">
-                                                    <tr>
-                                                        <th className="header">Latest Crypto News</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr>
-                                                        <td>The Daily: Nexo to Pay on Stable...</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Venezuela Begins Public of Nation...</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>PR: BitCanna – Dutch Blockchain...</td>
-                                                    </tr>
-                                                    </tbody>
-                                                </Table>
+                                                {EvoSprites.map((item, index)=>{return(
+                                                    <Card className="card-coin card-plain">
+                                                    <CardHeader>
+                                                        <img
+                                                            alt={item.name}
+                                                            className="img-center img-fluid rounded-circle"
+                                                            src={PokemonImg}
+                                                        />)
+                                                        <h4 className="title">{EvoNames[index].name})}</h4>
+                                                    </CardHeader>
+                                                    </Card>)})}
                                             </TabPane>
                                         </TabContent>
                                     </CardBody>
