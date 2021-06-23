@@ -77,104 +77,101 @@ export default function Regiones() {
             <br/><br/><br/><br/>
             <Breadcrumb>
                 <BreadcrumbItem><a href="/">Inicio</a></BreadcrumbItem>
-                <BreadcrumbItem><a href="/Pokemon">Pokemon</a></BreadcrumbItem>
-                <BreadcrumbItem active>Detalle Pokemon</BreadcrumbItem>
+                <BreadcrumbItem active>Regiones</BreadcrumbItem>
             </Breadcrumb>
             <Container className="align-items-center">
                 <p className="h1">Listado de Pokemon</p><img src={pokebola} alt="Logo"
                                                              className={'App-Poke'}/></Container>
             <Footer/></>) : Error ? (<><IndexNavbar/>
-            <br/><br/><br/><br/>
-            <Breadcrumb>
-                <BreadcrumbItem><a href="/">Inicio</a></BreadcrumbItem>
-                <BreadcrumbItem><a href="/Pokemon">Pokemon</a></BreadcrumbItem>
-                <BreadcrumbItem active>Detalle Pokemon</BreadcrumbItem>
-            </Breadcrumb>
-            <Container className="align-items-center">
-                <p className="h1">Listado de Pokemon</p><img src={Pikachu} alt="Logo" className={'Sad'}/><h1
-                className={'App'}>No se encuentra lo que buscas</h1></Container>
-            <Footer/></>) : (
+        <br/><br/><br/><br/>
+        <Breadcrumb>
+            <BreadcrumbItem><a href="/">Inicio</a></BreadcrumbItem>
+            <BreadcrumbItem active>Regiones</BreadcrumbItem>
+        </Breadcrumb>
+        <Container className="align-items-center">
+            <p className="h1">Listado de Regiones</p><img src={Pikachu} alt="Logo" className={'Sad'}/><h1
+            className={'App'}>No se encuentra lo que buscas</h1></Container>
+        <Footer/></>) : (
         <>
-            <IndexNavbar/>
-            <div className="wrapper">
-                <div className="page-header">
-                    <div className="page-header-image"/>
-                    <div className="content">
-                        <Container>
-                            <Row>
-                                {Regiones.map((item, index) => {
-                                    return (
-                                        <Col className="ml-auto mr-auto" lg="4" md="6" key={index}>
-                                            <div
-                                                className="square square-7"
-                                                id="square7"
-                                                style={{transform: squares7and8}}
-                                            />
-                                            <div
-                                                className="square square-8"
-                                                id="square8"
-                                                style={{transform: squares7and8}}
-                                            />
-                                            <Card className="card-register">
-                                                <CardHeader>
-                                                    <CardImg
-                                                        alt={item.name}
-                                                        src={require(`assets/img/${item.name}.png`).default}
-                                                    />
-                                                    <CardTitle tag="h4">{item.name}</CardTitle>
-                                                </CardHeader>
-                                                <CardBody>
+        <IndexNavbar/>
+        <br/><br/><br/><br/>
+        <Breadcrumb>
+            <BreadcrumbItem><a href="/">Inicio</a></BreadcrumbItem>
+            <BreadcrumbItem active>Regiones</BreadcrumbItem>
+        </Breadcrumb>
+        <Container className="align-items-center">
+            <p className="h1">Listado de Regiones</p>
+            <Row>
+                {Regiones.map((item, index) => {
+                    return (
+                        <Col className="ml-auto mr-auto" lg="4" md="6" key={index}>
+                            <div
+                                className="square square-7"
+                                id="square7"
+                                style={{transform: squares7and8}}
+                            />
+                            <div
+                                className="square square-8"
+                                id="square8"
+                                style={{transform: squares7and8}}
+                            />
+                            <Card className="card-register">
+                                <CardHeader>
+                                    <CardImg
+                                        alt={item.name}
+                                        src={require(`assets/img/${item.name}.png`).default}
+                                    />
+                                    <CardTitle tag="h4">{item.name}</CardTitle>
+                                </CardHeader>
+                                <CardBody>
 
-                                                </CardBody>
-                                                <CardFooter>
-                                                    <Link to={{
-                                                    pathname: "/Detalles-Region",
-                                                    state: { id: item.name }
-                                                }} ><Button className="btn-round" color="primary" size="lg">
-                                                        Ver mas
-                                                    </Button></Link>
-                                                </CardFooter>
-                                            </Card>
-                                        </Col>
-                                    )
-                                })}
-                            </Row>
-                            <div className="register-bg"/>
-                            <div
-                                className="square square-1"
-                                id="square1"
-                                style={{transform: squares1to6}}
-                            />
-                            <div
-                                className="square square-2"
-                                id="square2"
-                                style={{transform: squares1to6}}
-                            />
-                            <div
-                                className="square square-3"
-                                id="square3"
-                                style={{transform: squares1to6}}
-                            />
-                            <div
-                                className="square square-4"
-                                id="square4"
-                                style={{transform: squares1to6}}
-                            />
-                            <div
-                                className="square square-5"
-                                id="square5"
-                                style={{transform: squares1to6}}
-                            />
-                            <div
-                                className="square square-6"
-                                id="square6"
-                                style={{transform: squares1to6}}
-                            />
-                        </Container>
-                    </div>
-                </div>
-            </div>
-            <Footer/>
-        </>
-    )
+                                </CardBody>
+                                <CardFooter>
+                                    <Link to={{
+                                        pathname: "/Detalles-Region",
+                                        state: {id: item.name}
+                                    }}><Button className="btn-round" color="primary" size="lg">
+                                        Ver mas
+                                    </Button></Link>
+                                </CardFooter>
+                            </Card>
+                        </Col>
+                    )
+                })}
+            </Row>
+            <div className="register-bg"/>
+            <div
+                className="square square-1"
+                id="square1"
+                style={{transform: squares1to6}}
+            />
+            <div
+                className="square square-2"
+                id="square2"
+                style={{transform: squares1to6}}
+            />
+            <div
+                className="square square-3"
+                id="square3"
+                style={{transform: squares1to6}}
+            />
+            <div
+                className="square square-4"
+                id="square4"
+                style={{transform: squares1to6}}
+            />
+            <div
+                className="square square-5"
+                id="square5"
+                style={{transform: squares1to6}}
+            />
+            <div
+                className="square square-6"
+                id="square6"
+                style={{transform: squares1to6}}
+            />
+        </Container>
+    <Footer/>
+</>
+)
 }

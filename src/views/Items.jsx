@@ -18,6 +18,7 @@ export default function Items(props){
     const [ ItemsData, setItemsData ] = useState(false)
     const [Loading, setLoading] = useState(true)
     const [ ItemID, setItemID ] = useState([])
+    const [ Url, setUrl ] = useState('https://pokeapi.co/api/v2/item/')
 
 
 
@@ -25,10 +26,11 @@ export default function Items(props){
         setLoading(true)
         const fetchPokemon = async () => {
             try {
-                const result = await fetch('https://pokeapi.co/api/v2/item/')
+                const result = await fetch(`${Url}`)
                 const json = await result.json()
                 setItemsData(json)
                 const Items = json.results
+                console.log(ItemsData)
                 setItemID(Items);
                 setLoading(false)
                 setError(false)
@@ -39,7 +41,7 @@ export default function Items(props){
             }
         }
         fetchPokemon()
-    },[props.url])
+    },[Url])
 
     return Loading ? (
         <><IndexNavbar/>
@@ -72,14 +74,14 @@ export default function Items(props){
                 <Pagination>
                     <PaginationItem>
                         <PaginationLink onClick={() => {
-                            setItemsData(ItemsData.previous)
+                            setUrl(ItemsData.previous)
                         }}>
                             Anteriores
                         </PaginationLink>
                     </PaginationItem>
                     <PaginationItem>
                         <PaginationLink onClick={() => {
-                            setItemsData(ItemsData.next)
+                            setUrl(ItemsData.next)
                         }}>
                             Siguientes
                         </PaginationLink>
