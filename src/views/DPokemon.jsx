@@ -48,7 +48,7 @@ export default function Dpokemon(props) {
     const [PokemonStats, setPokemonStats] = useState([])
     const [PokemonTyp, setPokemonTyp] = useState([])
     const [PokemonInfo, setPokemonInfo] = useState([])
-    const [PokemonEvo, setPokemonEvo] = useState([])
+    const [PokemonEvo, setPokemonEvo] = useState('')
     const voice = voices[5] || null;
 
     useEffect(() => {
@@ -80,7 +80,7 @@ export default function Dpokemon(props) {
         }, []);
     const speak = (args = {}) => {
         const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args;
-        if (!supported) return;
+        if (!supported && !speaking) return;
         // Firefox won't repeat an utterance that has been
         // spoken, so we need to create a new instance each time
         const utterance = new window.SpeechSynthesisUtterance();
@@ -190,18 +190,18 @@ export default function Dpokemon(props) {
                         .then(dataList => {
                             const sprites = dataList.map(v => v.sprites.other["official-artwork"].front_default);
                             const names = dataList.map(n => n.name);
+                            console.log(sprites)
                             setEvoSprites(sprites)
                             setEvoNames(names)});
                     }
-
-
+                    console.log(EvoSprites)
                 } catch (e) {
                     console.log(e)
                     setLoading(false)
                     setError(true)
                 }
             }
-    setTimeout(() => Evoluciones(), 3000)
+    Evoluciones()
 }, [PokemonEvo])
 
     return Loading ? (

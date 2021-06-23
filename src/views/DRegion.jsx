@@ -5,7 +5,7 @@ import {
     Container,
     Row,
     Col,
-    Breadcrumb, BreadcrumbItem,
+    Breadcrumb, BreadcrumbItem, Badge,
 } from "reactstrap";
 
 // core components
@@ -20,7 +20,7 @@ export default function DRegion(props) {
     const [ Error, setError ] = useState(false)
     const [ Loading, setLoading ] = useState(true)
     const [ CiudadID, setCiudadID ] = useState([])
-
+    const Colores = ['primary','info','success','danger','warning','default']
     useEffect(() => {
         const fetchDetalleRegion = async () => {
             try {
@@ -83,10 +83,14 @@ export default function DRegion(props) {
                     </Breadcrumb>
 
                     <Container className="align-items-center">
+                        <p className="h1">Listado de Ciudades</p>
                         <Row>
-                            <Col lg="6" md="6">
 
-                            </Col>
+                                {CiudadID.map((item,index)=>{
+                                    return (<Col lg="2" md="2"><Badge color={Colores[Math.floor(Math.random() * Colores.length)]}>{item.name}</Badge></Col>)
+                                })
+                                }
+
                         </Row>
                     </Container>
                 </div>
