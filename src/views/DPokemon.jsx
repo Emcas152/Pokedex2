@@ -29,12 +29,15 @@ import Search from "../assets/img/search.png"
 
 
 export default function Dpokemon(props) {
-    const { onEnd = () => {} } = props;
+    const {
+        onEnd = () => {
+        }
+    } = props;
     const [voices, setVoices] = useState([]);
     const [speaking, setSpeaking] = useState(false);
     const [supported, setSupported] = useState(false);
-     const [ EvoSprites, setEvoSprites ] = useState([]);
-     const [ EvoNames, setEvoNames ] = useState([]);
+    const [EvoSprites, setEvoSprites] = useState([]);
+    const [EvoNames, setEvoNames] = useState([]);
     const [tabs, setTabs] = React.useState(1);
     const [Value, setValue] = useState('');
     const {id} = props.location.state;
@@ -63,23 +66,26 @@ export default function Dpokemon(props) {
     const processVoices = (voiceOptions) => {
         setVoices(voiceOptions);
     };
-    const getVoices = () => {
-        // Firefox seems to have voices upfront and never calls the
-        // voiceschanged event
-        let voiceOptions = window.speechSynthesis.getVoices();
+    useEffect(() => {
+        const getVoices = async () => {
+            // Firefox seems to have voices upfront and never calls the
+            // voiceschanged event
+            let voiceOptions = window.speechSynthesis.getVoices();
             processVoices(voiceOptions);
             return;
 
-    };
+        }
+        getVoices()
+    }, []);
     useEffect(() => {
-            if (typeof window !== 'undefined') {
-                setSupported(true);
-                setSpeaking(true);
+        if (typeof window !== 'undefined') {
+            setSupported(true);
+            setSpeaking(true);
 
-            }
-        }, []);
+        }
+    }, []);
     const speak = (args = {}) => {
-        const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args;
+        const {voice = null, text = '', rate = 1, pitch = 1, volume = 1} = args;
         if (!supported && !speaking) return;
         // Firefox won't repeat an utterance that has been
         // spoken, so we need to create a new instance each time
@@ -148,7 +154,7 @@ export default function Dpokemon(props) {
                 setValue(descES[Math.floor(Math.random() * descES.length)])
                 setLoading(false)
                 setError(false)
-                getVoices();
+
             } catch (e) {
                 console.log(e)
                 setLoading(false)
@@ -160,7 +166,7 @@ export default function Dpokemon(props) {
 
 
     useEffect(() => {
-        const Evoluciones = async ()=> {
+        const Evoluciones = async () => {
             try {
                 const result = await fetch(PokemonEvo);
                 const json = await result.json();
@@ -190,19 +196,19 @@ export default function Dpokemon(props) {
                         .then(dataList => {
                             const sprites = dataList.map(v => v.sprites.other["official-artwork"].front_default);
                             const names = dataList.map(n => n.name);
-                            console.log(sprites)
                             setEvoSprites(sprites)
-                            setEvoNames(names)});
-                    }
-                    console.log(EvoSprites)
-                } catch (e) {
-                    console.log(e)
-                    setLoading(false)
-                    setError(true)
+                            setEvoNames(names)
+                        });
                 }
+                evol()
+            } catch (e) {
+                console.log(e)
+                setLoading(false)
+                setError(true)
             }
-    Evoluciones()
-}, [PokemonEvo])
+        }
+        Evoluciones()
+    }, [PokemonEvo, EvoNames, EvoSprites])
 
     return Loading ? (
         <><IndexNavbar/>
@@ -251,7 +257,8 @@ export default function Dpokemon(props) {
                         <Row>
                             <Col lg="6" md="6">
                                 <h1 className="profile-title text-left">{PokemonID}</h1>
-                                <h5 className="text-on-back" onClick={() => speak({ text: Value, voice})}>{PokemonData.id}</h5>
+                                <h5 className="text-on-back"
+                                    onClick={() => speak({text: Value, voice})}>{PokemonData.id}</h5>
                                 <div className="profile-description">
                                     {PokemonInfo.length < 1 ? (<><img src={Search} alt="Logo" className={'Sad'}/><h1
                                         className={'App'}>Buscando
@@ -270,7 +277,7 @@ export default function Dpokemon(props) {
                                     </CardHeader>
                                     <CardBody>
                                         <Nav
-                                            className="nav-tabs-primary justify-content-center"
+                                            className="nav-tabs-primary justify-content-left"
                                             tabs
                                         >
                                             <NavItem>
@@ -282,7 +289,7 @@ export default function Dpokemon(props) {
                                                         e.preventDefault();
                                                         setTabs(1);
                                                     }}
-                                                    href="#pablo"
+                                                    href="#"
                                                 >
                                                     Stats
                                                 </NavLink>
@@ -312,10 +319,12 @@ export default function Dpokemon(props) {
                                                     }}
                                                     href="#"
                                                 >
-                                                    Evoluciones
+                                                    Evol
                                                 </NavLink>
                                             </NavItem>
                                         </Nav>
+                                        <hr/>
+                                        <br/><br/>
                                         <TabContent
                                             className="tab-subcategories"
                                             activeTab={"tab" + tabs}
@@ -331,14 +340,14 @@ export default function Dpokemon(props) {
                                                     <tbody>
                                                     {PokemonStats.map((item, index) => {
                                                         return (<tr key={index}>
-                                                            <td key={index + 10}>{item.stat.name}</td>
-                                                            <td key={index + 20}>{item.base_stat}</td>
+                                                            <td key={item.stat.name}>{item.stat.name}</td>
+                                                            <td key={item.base_stat}>{item.base_stat}</td>
                                                         </tr>)
                                                     })}
                                                     </tbody>
                                                 </Table>
                                             </TabPane>
-                                            <TabPane tabId="tab2">
+                                            <TabPane tabId="tab2" key={PokemonID.name}>
                                                 <Row>
                                                     {PokemonAbb.map((item, index) => {
                                                         return (<Col sm="6" key={index + 30}><Badge color="primary" pill
@@ -353,17 +362,20 @@ export default function Dpokemon(props) {
                                                 </Row>
                                             </TabPane>
                                             <TabPane tabId="tab3">
-                                                {EvoSprites.map((item, index)=>{return(
-                                                    <Card className="card-coin card-plain">
-                                                    <CardHeader>
-                                                        <img
-                                                            alt={item.name}
-                                                            className="img-center img-fluid rounded-circle"
-                                                            src={PokemonImg}
-                                                        />)
-                                                        <h4 className="title">{EvoNames[index].name})}</h4>
-                                                    </CardHeader>
-                                                    </Card>)})}
+                                                {EvoSprites.map((item, index) => {
+                                                    return (
+                                                        <Col><Card className="card-coin card-plain" key={index}>
+                                                            <CardHeader>
+                                                                <img
+                                                                    alt={item.name}
+                                                                    className="img-center img-fluid rounded-circle"
+                                                                    src={EvoSprites[index]}
+                                                                />
+                                                                <h4 className="title" key={index}>{EvoNames[index]}</h4>
+                                                            </CardHeader>
+                                                        </Card></Col>)
+                                                })}
+
                                             </TabPane>
                                         </TabContent>
                                     </CardBody>
@@ -374,9 +386,9 @@ export default function Dpokemon(props) {
                 </div>
             </div>
             <br/> <br/> <br/> <br/>
-        <Footer/>
+            <Footer/>
 
-    </>
+        </>
 
     );
 }

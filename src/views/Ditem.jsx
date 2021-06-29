@@ -48,14 +48,17 @@ export default function DItem(props) {
     const processVoices = (voiceOptions) => {
         setVoices(voiceOptions);
     };
-    const getVoices = () => {
-        // Firefox seems to have voices upfront and never calls the
-        // voiceschanged event
-        let voiceOptions = window.speechSynthesis.getVoices();
-        processVoices(voiceOptions);
-        return;
+    useEffect(() => {
+        const getVoices = async () => {
+            // Firefox seems to have voices upfront and never calls the
+            // voiceschanged event
+            let voiceOptions = window.speechSynthesis.getVoices();
+            processVoices(voiceOptions);
+            return;
 
-    };
+        }
+        getVoices()
+    },[]);
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setSupported(true);
@@ -64,7 +67,7 @@ export default function DItem(props) {
     }, []);
     const speak = (args = {}) => {
         const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args;
-        if (!supported) return;
+        if (!supported & !speaking) return;
         // Firefox won't repeat an utterance that has been
         // spoken, so we need to create a new instance each time
         const utterance = new window.SpeechSynthesisUtterance();
@@ -90,7 +93,7 @@ export default function DItem(props) {
         // Specify how to clean up after this effect:
         return function cleanup() {
             if (navigator.platform.indexOf("Win") > -1) {
-                ps = null;
+                ps.destroy();
                 document.documentElement.className += " perfect-scrollbar-off";
                 document.documentElement.classList.remove("perfect-scrollbar-on");
             }
@@ -108,7 +111,7 @@ export default function DItem(props) {
                 SetItemImg(json.sprites.default)
                 setLoading(false)
                 setError(false)
-                getVoices()
+
             } catch (e) {
                 console.log(e)
                 setLoading(false)

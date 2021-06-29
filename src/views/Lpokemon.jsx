@@ -20,6 +20,7 @@ import classnames from "classnames";
 import IndexNavbar from "../components/Navbars/IndexNavbar";
 import Pikachu from "../assets/img/Pikachu.png";
 import Footer from "../components/Footer/Footer";
+import {Link} from "react-router-dom";
 
 export default function Lpokemon(props){
     const [tabs, setTabs] = useState(1);
@@ -60,11 +61,14 @@ return Error ? (<><IndexNavbar/>
     <Footer/></>) : (<Col className="ml-auto mr-auto" lg="4" md="6">
     <Card className="card-coin card-plain">
         <CardHeader>
-            <img
+            <Link to={{
+                pathname: "/Detalles-Pokemon",
+                state: { id: {PokemonID} }
+            }} ><img
                 alt="..."
                 className="img-center img-fluid rounded-circle"
                 src={`${PokemonImg}`}
-            />
+            /></Link>
             <h4 className="title justify-content-center">{PokemonID}</h4>
         </CardHeader>
         <CardBody>
