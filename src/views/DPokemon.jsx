@@ -36,6 +36,7 @@ export default function Dpokemon(props) {
     const [voices, setVoices] = useState([]);
     const [speaking, setSpeaking] = useState(false);
     const [supported, setSupported] = useState(false);
+    const [EvoIds, setEvoIds] = useState([]);
     const [EvoSprites, setEvoSprites] = useState([]);
     const [EvoNames, setEvoNames] = useState([]);
     const [tabs, setTabs] = React.useState(1);
@@ -126,7 +127,12 @@ export default function Dpokemon(props) {
                 const result = await fetch(`https://pokeapi.co/api/v2/pokemon/${Pokemon}`)
                 const json = await result.json()
                 setPokemonData(json);
-                setPokemonID(json.name);
+                if (json.name.includes('-')){
+                    const name = json.name.split("-")
+                    setPokemonID(name[0]);
+                } else {
+                    setPokemonID(json.name)
+                }
                 setPokemonAbb(json.abilities);
                 setPokemonImg(json.sprites.other["official-artwork"].front_default);
                 setPokemonStats(json.stats);
@@ -173,22 +179,28 @@ export default function Dpokemon(props) {
                 const evol = () => {
                     const api = "https://pokeapi.co/api/v2/pokemon/";
                     const first = json.chain;
+
+                    let alolaname =""
+                    if (Pokemon.includes('-')){
+                        const nameAlola = Pokemon.split("-")
+                        alolaname = `-${nameAlola[1]}`
+                    }
                     let second;
                     let third;
                     let evos = [];
                     if (first) {
-                        const e1 = fetch(`${api}${first.species.name}/`);
+                        const e1 = fetch(`${api}${first.species.name}${alolaname}/`);
                         evos.push(e1);
                         second = first.evolves_to[0];
                     }
                     if (second) {
-                        const e2 = fetch(`${api}${second.species.name}/`);
+                        const e2 = fetch(`${api}${second.species.name}${alolaname}/`);
                         third = second.evolves_to[0];
 
                         evos.push(e2);
                     }
                     if (third) {
-                        const e3 = fetch(`${api}${third.species.name}/`);
+                        const e3 = fetch(`${api}${third.species.name}${alolaname}/`);
                         evos.push(e3);
                     }
                     Promise.all(evos)
@@ -196,11 +208,14 @@ export default function Dpokemon(props) {
                         .then(dataList => {
                             const sprites = dataList.map(v => v.sprites.other["official-artwork"].front_default);
                             const names = dataList.map(n => n.name);
+                            const ids = dataList.map(c => c.id);
                             setEvoSprites(sprites)
                             setEvoNames(names)
+                            setEvoIds(ids)
                         });
+
                 }
-                evol()
+                setTimeout( evol(),3000)
             } catch (e) {
                 console.log(e)
                 setLoading(false)
@@ -208,7 +223,7 @@ export default function Dpokemon(props) {
             }
         }
         Evoluciones()
-    }, [PokemonEvo, EvoNames, EvoSprites])
+    }, [PokemonEvo, EvoNames, EvoSprites, EvoIds])
 
     return Loading ? (
         <><IndexNavbar/>
@@ -219,7 +234,7 @@ export default function Dpokemon(props) {
                 <BreadcrumbItem active>Detalle Pokemon</BreadcrumbItem>
             </Breadcrumb>
             <Container className="align-items-center">
-                <p className="h1">Listado de Pokemon</p><img src={pokebola} alt="Logo"
+                <p className="h1">Detalle Pokemon</p><img src={pokebola} alt="Logo"
                                                              className={'App-Poke'}/></Container>
             <Footer/></>) : Error ? (<><IndexNavbar/>
         <br/><br/><br/><br/>
@@ -229,7 +244,7 @@ export default function Dpokemon(props) {
             <BreadcrumbItem active>Detalle Pokemon</BreadcrumbItem>
         </Breadcrumb>
         <Container className="align-items-center">
-            <p className="h1">Listado de Pokemon</p><img src={Pikachu} alt="Logo" className={'Sad'}/><h1
+            <p className="h1">Detalle Pokemon</p><img src={Pikachu} alt="Logo" className={'Sad'}/><h1
             className={'App'}>No se encuentra lo que buscas</h1></Container>
         <Footer/></>) : (
         <>
@@ -270,7 +285,7 @@ export default function Dpokemon(props) {
                                     <CardHeader>
                                         <img
                                             alt={PokemonID.name}
-                                            className="img-center img-fluid rounded-circle"
+                                            className="img-center img-fluid rounded-circle icon"
                                             src={PokemonImg}
                                         />
                                         <h4 className="title">Información</h4>
@@ -306,20 +321,6 @@ export default function Dpokemon(props) {
                                                     href="#"
                                                 >
                                                     Tipos
-                                                </NavLink>
-                                            </NavItem>
-                                            <NavItem>
-                                                <NavLink
-                                                    className={classnames({
-                                                        active: tabs === 3,
-                                                    })}
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        setTabs(3);
-                                                    }}
-                                                    href="#"
-                                                >
-                                                    Evol
                                                 </NavLink>
                                             </NavItem>
                                         </Nav>
@@ -361,22 +362,6 @@ export default function Dpokemon(props) {
                                                     })}
                                                 </Row>
                                             </TabPane>
-                                            <TabPane tabId="tab3">
-                                                {EvoSprites.map((item, index) => {
-                                                    return (
-                                                        <Col><Card className="card-coin card-plain" key={index}>
-                                                            <CardHeader>
-                                                                <img
-                                                                    alt={item.name}
-                                                                    className="img-center img-fluid rounded-circle"
-                                                                    src={EvoSprites[index]}
-                                                                />
-                                                                <h4 className="title" key={index}>{EvoNames[index]}</h4>
-                                                            </CardHeader>
-                                                        </Card></Col>)
-                                                })}
-
-                                            </TabPane>
                                         </TabContent>
                                     </CardBody>
                                 </Card>
@@ -384,6 +369,28 @@ export default function Dpokemon(props) {
                         </Row>
                     </Container>
                 </div>
+            </div>
+            <div className="section">
+                <Container key={"Evolutions"}>
+                    <Row>
+                        {EvoSprites.map((item, index) => {
+                            return (
+                                <Col key={EvoNames[index]}>
+                                    <h1 className="profile-title text-left" key={`${EvoNames[index]}${index}`}>{EvoNames[index]}</h1>
+                                    <h5 className="text-on-back">{EvoIds[index]}</h5>
+                                    <Card className="card-coin card-plain" key={index}>
+                                    <CardHeader>
+                                        <img
+                                            alt={item.name}
+                                            className="img-center img-fluid rounded-circle"
+                                            src={EvoSprites[index]}
+                                        />
+                                    </CardHeader>
+                                </Card>
+                                </Col>)
+                        })}
+                    </Row>
+                </Container>
             </div>
             <br/> <br/> <br/> <br/>
             <Footer/>
