@@ -30,7 +30,6 @@ export default function Items(props){
                 const json = await result.json()
                 setItemsData(json)
                 const Items = json.results
-                console.log(ItemsData)
                 setItemID(Items);
                 setLoading(false)
                 setError(false)
